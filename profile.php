@@ -27,7 +27,7 @@ $result = mysqli_query ($connection,$sql);
 <head>
     <meta charset="utf-8">
 
-    <title>Welcome, <?php echo $mainname; ?></title>
+    <title>Welcome, <?php echo strip_tags($mainname); ?></title>
 
     <!--Angular Bootstrap -->
     <script src="angularjs/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
@@ -52,7 +52,7 @@ $result = mysqli_query ($connection,$sql);
             <li role="presentation" class=""><a href="addphoto.php">Add Photo</a></li>
             <li role="presentation" class="active" class="dropdown" style="margin-left: 1%;">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-                    <?php echo $mainname; ?> <span class="caret"></span>
+                    <?php echo strip_tags($mainname); ?> <span class="caret"></span>
                 </a>
                 <ul class="dropdown-menu">
                     <li role="presentation"><a href="#">Profile</a></li>
@@ -77,14 +77,14 @@ $result = mysqli_query ($connection,$sql);
                     echo "<div class='col-lg-4 col-sm-6'>";
                     echo "<div class='thumbnail''>";
                     // echo "<a href='#' data-toggle='modal' data-target='#myModal' onclick='imgchange(".$i.")'>";
-                    echo "<img style='height: 188px;' id='userImage' value=". $row['imageName'] ." src='uploads/".$row['imageName']."'>";
+                    echo "<img style='height: 188px;' id='userImage' value=". strip_tags($row['imageName']) ." src='uploads/".strip_tags($row['imageName'])."'>";
                     echo "</a>";
                     echo"<br>";
                     echo "<hr>";
                     if($row['caption'] == ""){
                         echo "<span>No Caption</span>";
                     } else {
-                        echo '<span id="caption">Caption: ' . $row['caption'] . '</span>';
+                        echo '<span id="caption">Caption: ' . strip_tags($row['caption']) . '</span>';
                     }
                     echo "</div>";
                     echo "</div>";

@@ -3,6 +3,7 @@ include 'library.php';
 $usrname= '';
 if(isset($_SESSION['sessionVar'])) {
  $usrname=$_SESSION['sessionVar'];
+
 }
 
 $sql="SELECT name FROM photoApp_user WHERE username = '$usrname'";
@@ -33,9 +34,11 @@ if($mainname != ""){
     <div class="login">
       <h1>Log in to the network</h1>
       <form method="post" action="checklogin.php">
+      <?php echo '<input type="hidden" name="csrf" value="'. $csrf->getToken() .'" />'; ?>
         <p><input type="text" name="myusername" value="" placeholder="Username"></p>
         <p><input type="password" name="mypassword" value="" placeholder="Password"></p>
         <p class="submit"><input type="submit" name="commit" value="Login"></p>
+        <input type="hidden" name="redirect" value="home.php">
       </form>
     </div>
 

@@ -40,7 +40,7 @@
 function register(){
 
 //Connecting to database
-    $connection = mysqli_connect('localhost', 'root', 'root', 'photoApp');
+    $connection = mysqli_connect('localhost', 'root', '', 'photoApp');
 
 //Collecting info
 $name = $_REQUEST['name'];
@@ -106,7 +106,7 @@ die("Passwords don't match!");
 
 
 //If everything is okay let's register this user
-
+$password = md5($password);
 $insertQuery = "INSERT INTO photoApp_user (username,password,email,name) VALUES ('$username','$password','$email','$name')";
 
 if(!mysqli_query($connection, $insertQuery)){

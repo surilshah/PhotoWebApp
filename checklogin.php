@@ -4,22 +4,40 @@ include 'library.php';
 // username and password sent from form
 $myusername=$_POST['myusername'];
 $mypassword=$_POST['mypassword'];
-
-
-$sql="SELECT * FROM photoApp_user WHERE username='$myusername' and password='$mypassword'";
-$result=mysqli_query($connection, $sql);
-
-
-$count=mysqli_num_rows($result);
-
-
-if($count==1){
-  $x = $myusername;
-  $_SESSION['sessionVar'] = $x;
-
-  header("location:home.php");
+if(isset($_POST['redirect'])) {
+    $redirectLocation = $_POST['redirect'];
 }
-else {
-  echo "Wrong Username or Password";
+
+if (!$csrf->isTokenValid($_POST['csrf']))
+{
+    echo 'CSRF Attack detected!';
 }
+else
+{
+    $mypassword = md5($mypassword);
+    $sql = "SELECT * FROM photoApp_user WHERE username='$myusername' AND password='$mypassword'";
+    $result = mysqli_query($connection, $sql);
+
+//If user is found the count will be equal to 1, else wrong username or password
+    $count = mysqli_num_rows($result);
+    if ($count == 1) {
+        $_SESSION['sessionVar'] = $myusername;
+
+    if(isset($_POST['redirect'])) {
+        header("location:".$redirectLocation);
+    }
+    } else {
+        $message = "Wrong Username or Password";
+        echo "<script type='text/javascript'>alert('$message');</script>";
+        echo '<body><a href="index.php" style="margin: 1% 1% 0% 0%;">Back to Login Page</a></body>';
+
+    }
+}
+
+function clean($string) {
+    $string = str_replace(' ', '-', $string); // Replaces all spaces with hyphens.
+
+    return preg_replace('/[^A-Za-z0-9\-]/', '', $string); // Removes special chars.
+}
+
 ?>

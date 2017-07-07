@@ -19,16 +19,22 @@ $allowed =  array('gif','png' ,'jpg', 'jpeg');
 
 if(isset($_POST['submit'])){
 
-    $ext = pathinfo($_FILES["file"]["name"], PATHINFO_EXTENSION);
-    if(in_array($ext,$allowed) ) {
-        $insertQuery = "INSERT INTO photoApp_photos (username,imageName,caption) VALUES ('$usrname','".$_FILES['file']['name']."','".$_POST['caption']."')";
-        $result=mysqli_query($connection, $insertQuery);
-        move_uploaded_file($_FILES['file']['tmp_name'],"uploads/".$_FILES["file"]["name"]);
-        $message = "Image uploaded successfully!";
-        echo "<script type='text/javascript'>alert('$message');</script>";
+    if (!$csrf->isTokenValid($_POST['photocsrf'])) {
+        echo 'CSRF Attack detected!';
     } else {
-        $message = "Image extension not valid.";
-        echo "<script type='text/javascript'>alert('$message');</script>";
+        $extension = pathinfo($_FILES["file"]["name"], PATHINFO_EXTENSION);
+        if (in_array($extension, $allowed)) {
+            $mixName = explode(".", $_FILES["file"]["name"]);
+            $newName = round(microtime(true)) . '.' . end($mixName);
+            move_uploaded_file($_FILES["file"]["tmp_name"], "uploads/" . $usrname . "_" . $newName);
+            $insertQuery = "INSERT INTO photoApp_photos (username,imageName,caption) VALUES ('$usrname','" . $usrname . "_" . $newName . "','" . $_POST['caption'] . "')";
+            $result = mysqli_query($connection, $insertQuery);
+            $message = "Image uploaded successfully!";
+            echo "<script type='text/javascript'>alert('$message');</script>";
+        } else {
+            $message = "Image extension not valid.";
+            echo "<script type='text/javascript'>alert('$message');</script>";
+        }
     }
 }
 
@@ -39,7 +45,7 @@ if(isset($_POST['submit'])){
 <head>
     <meta charset="utf-8">
 
-    <title>Welcome, <?php echo $mainname; ?></title>
+    <title>Welcome, <?php echo strip_tags($mainname); ?></title>
 
     <!--Angular Bootstrap -->
     <script src="angularjs/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
@@ -64,7 +70,7 @@ if(isset($_POST['submit'])){
             <li role="presentation" class="active"><a href="addphoto.php">Add Photo</a></li>
             <li role="presentation" class="dropdown" style="margin-left: 1%;">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-                    <?php echo $mainname; ?> <span class="caret"></span>
+                    <?php echo strip_tags($mainname); ?> <span class="caret"></span>
                 </a>
                 <ul class="dropdown-menu">
                     <li role="presentation"><a href="profile.php">Profile</a></li>
